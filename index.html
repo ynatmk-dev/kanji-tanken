@@ -26,8 +26,9 @@ const kanjiOf=s=>(String(s).match(/[一-龯々]/g)||[]);
 function unitMatches(word){return groups.filter(u=>u.unit&&kanjiOf(word).some(c=>u.chars.includes(c))).map(u=>u.unit)}
 function unitLabel(word){let a=unitMatches(word);return a.length?'該当：'+a.map(n=>'U'+n).join('・'):'該当ユニットなし'}
 function previewUnit(){$('unitPreview').textContent=unitLabel($('word').value)}
-$('word').addEventListener('input',previewUnit);
-const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function persist(){localStorage.setItem('kanji_words_v2',JSON.stringify(words));renderList();renderFilters()}
+
+const $=id=>document.getElementById(id);
+$('word').addEventListener('input',previewUnit);const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function persist(){localStorage.setItem('kanji_words_v2',JSON.stringify(words));renderList();renderFilters()}
 function tab(t){['read','choice','edit','groups'].forEach(x=>{$(x).classList.toggle('hidden',x!==t);$('tab-'+x).classList.toggle('active',x===t)});if(t==='read')renderRead();if(t==='choice')renderChoice();if(t==='edit')renderList();if(t==='groups')renderGroups()}
 function activeWords(){if(groupFilter==='all'&&!selectedUnits.length)return words;let selected=selectedUnits.length?selectedUnits:groupFilter.split(',').map(Number).filter(Number.isInteger);let chars=new Set(selected.flatMap(i=>[...(groups[i]?.chars||'')]));return words.filter(w=>{let k=kanjiOf(w.word);return k.length&&(filterMode==='any'?k.some(c=>chars.has(c)):k.every(c=>chars.has(c)))} )}
 function setModeFilter(v){filterMode=v==='all'?'all':'any';localStorage.setItem('kanji_filter_mode',filterMode);document.querySelectorAll('.modeFilter').forEach(el=>el.value=filterMode);readIndex=0;choiceIndex=0;renderRead();renderChoice()}
